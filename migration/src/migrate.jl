@@ -9,6 +9,8 @@ All migrated items get default provenance: "Migrated from Zotero SQLite"
 module ZoteroMigration
 
 using SQLite
+using DBInterface
+using Tables
 using JSON3
 using Dates
 using SHA
@@ -108,7 +110,7 @@ function get_item_types(db::SQLite.DB)
         SELECT itemTypeID, typeName
         FROM itemTypes
     """
-    result = DBInterface.execute(db, query) |> columntable
+    result = DBInterface.execute(db, query) |> Tables.columntable
     Dict(zip(result.itemTypeID, result.typeName))
 end
 
@@ -120,7 +122,7 @@ function get_field_names(db::SQLite.DB)
         SELECT fieldID, fieldName
         FROM fields
     """
-    result = DBInterface.execute(db, query) |> columntable
+    result = DBInterface.execute(db, query) |> Tables.columntable
     Dict(zip(result.fieldID, result.fieldName))
 end
 
@@ -133,7 +135,7 @@ function fetch_items(db::SQLite.DB, item_types::Dict, field_names::Dict)
         SELECT i.itemID, i.key, i.dateAdded, i.dateModified,
                i.itemTypeID, i.libraryID, i.version
         FROM items i
-        WHERE i.itemTypeID NOT IN (1, 14)  -- Not attachment or note
+        WHERE i.itemTypeID NOT IN (3, 28)  -- Not attachment or note
     """
 
     items = Dict{Int, Dict{String, Any}}()
@@ -196,7 +198,7 @@ function fetch_attachments(db::SQLite.DB)
                ia.parentItemID, ia.contentType, ia.path
         FROM items i
         JOIN itemAttachments ia ON i.itemID = ia.itemID
-        WHERE i.itemTypeID = 14  -- Attachment type
+        WHERE i.itemTypeID = 3  -- Attachment type
     """
 
     attachments = Dict{Int, Dict{String, Any}}()
@@ -238,7 +240,7 @@ function fetch_notes(db::SQLite.DB)
                n.parentItemID, n.note
         FROM items i
         JOIN itemNotes n ON i.itemID = n.itemID
-        WHERE i.itemTypeID = 1  -- Note type
+        WHERE i.itemTypeID = 28  -- Note type
     """
 
     notes = Dict{Int, Dict{String, Any}}()
