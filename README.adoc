@@ -148,7 +148,7 @@ curl http://localhost:8080/users/local/items
 
 == Commands Reference
 
-After installation, you have three commands:
+After installation, you have four commands:
 
 [source,bash]
 ----
@@ -163,6 +163,11 @@ formdb-sync [--dry-run] [--verbose]
 formdb-migrate --apply
     Re-run full migration from Zotero SQLite.
     Use this if sync gets out of date or you want a fresh start.
+
+formdb-score --item KEY [--provenance N] [--methodology N] ...
+    Set PROMPT evidence quality scores for an item (v0.2.0).
+    Each dimension is 0-100. Use --all N for quick scoring.
+    Use --list-unscored to find items needing evaluation.
 ----
 
 == API Examples
@@ -189,6 +194,21 @@ curl "http://localhost:8080/users/local/items?itemType=journalArticle"
 
 # Paginate
 curl "http://localhost:8080/users/local/items?limit=50&start=100"
+
+# PROMPT Scoring (v0.2.0)
+# Set evidence quality scores for an item
+curl -X PUT "http://localhost:8080/users/local/items/ABC12345/prompt-scores" \
+    -H "Content-Type: application/json" \
+    -d '{"provenance": 90, "methodology": 85, "publication": 95}'
+
+# Get PROMPT scores for an item
+curl "http://localhost:8080/users/local/items/ABC12345/prompt-scores"
+
+# Filter by minimum quality score
+curl "http://localhost:8080/users/local/items?minScore=80"
+
+# Get only items that have been scored
+curl "http://localhost:8080/users/local/items?hasScore=true"
 ----
 
 == Uninstall
@@ -288,6 +308,67 @@ structure PromptScores where
                     transparency.val) / 6
 ----
 
+== DOI Immutability (v0.3.0)
+
+When a document has a DOI, that DOI is a cryptographic promise: "this IS that document."
+FormDB treats DOIs as sources of truth for document identity.
+
+=== The Rules
+
+|===
+| Operation | Canonical DOI Item | Play-Variant
+
+| Exists as
+| Immutable reference
+| Editable personal copy
+
+| Edits
+| ❌ Blocked (creates variant instead)
+| ✓ Allowed
+
+| Notes/Annotations
+| ❌ Cannot attach
+| ✓ Attach here
+
+| Tags
+| ❌ Cannot modify
+| ✓ Modify freely
+
+| Identity
+| You KNOW it's that document
+| Clearly marked as "derived from DOI:xxx"
+|===
+
+=== Why This Matters
+
+A DOI identifies THE document as published. When you cite DOI:10.1000/xyz:
+
+* You're citing the canonical, unmodified version
+* Not "your copy with annotations"
+* Not "a version you edited for clarity"
+
+FormDB enforces this separation so your citations remain valid references to the actual source.
+
+=== How It Works
+
+[source,text]
+----
+Item with DOI:10.1000/xyz
+├── [CANONICAL] The original, immutable
+│   └── Cannot be edited, annotated, or tagged
+│
+└── [PLAY-VARIANT] Your personal copy
+    ├── parent_doi: "10.1000/xyz"
+    ├── Your annotations
+    ├── Your notes
+    └── Your tags
+----
+
+When you try to edit a DOI item, FormDB automatically:
+1. Creates a play-variant linked to the original
+2. Applies your changes to the variant
+3. Leaves the canonical untouched
+
 == Troubleshooting
 
 === "Cannot connect to Zotero" when running formdb-sync
@@ -336,12 +417,20 @@ julia --project=. bin/migrate.jl --from /path/to/your/zotero.sqlite --to ~/.form
 * REST API server
 * Sync bridge
 
-=== v0.2.0: Evidence Quality (Next)
-* PROMPT scoring UI
-* Confidence-indexed claims
-* Quality-filtered queries
+=== v0.2.0: Evidence Quality ✓
+* PROMPT scoring API (GET/PUT /items/:key/prompt-scores)
+* Quality-filtered queries (?minScore=80, ?hasScore=true)
+* formdb-score CLI for evidence evaluation
+* Scores stored in journal with provenance
 
-=== v0.3.0: Full Integration
+=== v0.3.0: DOI Immutability (Next)
+* DOI items become canonical, immutable references
+* Edits to DOI items create "play-variants" (clearly marked forks)
+* Notes/annotations can ONLY attach to play-variants
+* DOI canonical versions remain pristine - you KNOW it's that document
+* `parent_doi` field links variants back to canonical source
+
+=== v0.4.0: Full Integration
 * Browser connector plugin
 * Desktop app integration
 * Real-time sync
@@ -355,3 +444,4 @@ AGPL-3.0-or-later
 * link:https://github.com/hyperpolymath/formdb[FormDB] - The underlying narrative-first database engine
 * link:https://github.com/hyperpolymath/zotero-librarian[Zotero-Librarian] - Filename normalization tool
 * link:https://www.zotero.org[Zotero] - The original reference manager we build on top of
+* link:https://github.com/hyperpolymath/formdb-debugger[FormDB Debugger] - Proof-carrying database debugger
