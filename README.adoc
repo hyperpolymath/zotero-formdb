@@ -1,0 +1,178 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+= Zotero-FormDB
+:toc:
+:toc-placement: preamble
+
+A post-truth reference manager built on dependently-typed FormDB.
+
+== Overview
+
+Zotero-FormDB reimagines bibliographic management for an era where source verification matters. Built on FQL-dt (Form Query Language with Dependent Types), it provides:
+
+* **Provenance by construction** - You cannot add an item without saying who added it and why
+* **Evidence quality scores** - PROMPT-style ratings (Provenance, Replicability, Objectivity, Methodology, Publication, Transparency)
+* **Reversibility proofs** - Every change can be undone, with mathematical proof
+* **Cloud-safe storage** - Append-only journal works on Dropbox, GDrive, OneDrive without corruption
+* **Machine-checkable integrity** - Types ARE proofs; the compiler verifies your data
+
+== Why Not SQLite?
+
+|===
+| Problem | SQLite | Zotero-FormDB
+
+| Cloud sync corruption
+| Common (concurrent writes)
+| Impossible (append-only)
+
+| "Who added this?"
+| Optional field, often empty
+| Required by type system
+
+| "Is this source reliable?"
+| Trust the user
+| PROMPT scores with bounds proofs
+
+| "Can I undo this?"
+| Maybe, check backups
+| Type carries reversibility proof
+
+| "Is data consistent?"
+| Runtime checks
+| Compile-time proofs
+|===
+
+== Architecture
+
+[source,text]
+----
+┌─────────────────────────────────────────────────────────────┐
+│  Zotero Connector (Browser Extension / Desktop App)         │
+│  Existing Zotero UX preserved                               │
+├─────────────────────────────────────────────────────────────┤
+│  API Compatibility Layer (Julia/Rust)                       │
+│  Speaks Zotero Web API, translates to FQL-dt                │
+├─────────────────────────────────────────────────────────────┤
+│  FQL-dt Runtime (Lean 4)                                    │
+│  Type-checked queries, proof obligations                    │
+├─────────────────────────────────────────────────────────────┤
+│  Form.Journal (Append-Only)                                 │
+│  Content-addressed, Merkle-verified                         │
+├─────────────────────────────────────────────────────────────┤
+│  Cloud Storage (Dropbox / GDrive / OneDrive / Local)        │
+│  Just files - no special sync needed                        │
+└─────────────────────────────────────────────────────────────┘
+----
+
+== Core Types
+
+[source,lean]
+----
+-- Every item has provenance by construction
+structure ZoteroItem where
+  id : ValidUUID
+  itemType : ItemType
+  added_by : ActorId        -- Non-empty, required
+  added_at : Timestamp
+  rationale : Rationale     -- Non-empty, required
+
+-- Evidence quality (PROMPT framework)
+structure PromptScores where
+  provenance : BoundedNat 0 100
+  replicability : BoundedNat 0 100
+  objective : BoundedNat 0 100
+  methodology : BoundedNat 0 100
+  publication : BoundedNat 0 100
+  transparency : BoundedNat 0 100
+  overall : BoundedNat 0 100
+  overall_correct : overall.val = (provenance.val + replicability.val +
+                    objective.val + methodology.val + publication.val +
+                    transparency.val) / 6
+
+-- Attachments with content hash
+structure Attachment where
+  id : ValidUUID
+  parent : ValidUUID
+  filename : NonEmptyString
+  contentHash : Blake3Hash
+  mimeType : MimeType
+  prompt_scores : Option PromptScores
+----
+
+== Installation
+
+[source,bash]
+----
+# Install Lean 4 (via elan)
+curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh
+
+# Clone and build
+git clone https://github.com/hyperpolymath/zotero-formdb
+cd zotero-formdb
+lake build
+----
+
+== Migration from Zotero
+
+[source,bash]
+----
+# Export existing Zotero library
+zotero-formdb migrate --from ~/.zotero/zotero.sqlite --to ~/FormDB/zotero
+
+# Items without provenance get default: "Migrated from Zotero SQLite"
+----
+
+== Usage
+
+[source,lean]
+----
+-- Insert with provenance (required by type!)
+INSERT INTO items (title, itemType)
+VALUES ('ONS CPI Data 2023', 'report')
+ADDED_BY "researcher_alice"
+RATIONALE "Primary source for UK inflation analysis"
+WITH_PROMPT_SCORES {
+  provenance: 100,      -- Official government data
+  replicability: 100,   -- Publicly available
+  objective: 95,        -- Statistical methodology
+  methodology: 95,      -- Well-documented
+  publication: 100,     -- Peer review equivalent
+  transparency: 95      -- Full methodology published
+};
+
+-- Query with quality filter (type proves all results meet threshold)
+SELECT (item : ZoteroItem | item.prompt_scores.overall > 80)
+FROM items
+WHERE itemType = 'report';
+----
+
+== Roadmap
+
+=== v0.1.0: Core Types + Journal
+* Lean 4 type definitions
+* Append-only journal format
+* Basic CRUD with provenance
+
+=== v0.2.0: Migration + CLI
+* SQLite migration tool
+* Command-line interface
+* Cloud storage adapter
+
+=== v0.3.0: Zotero API Compatibility
+* Web API endpoints
+* Browser connector support
+* Desktop app integration
+
+=== v0.4.0: PROMPT Scoring
+* Evidence quality ratings
+* Confidence-indexed claims
+* Reversibility proofs
+
+== License
+
+AGPL-3.0-or-later
+
+== Related Projects
+
+* link:https://github.com/hyperpolymath/formdb[FormDB] - The underlying database engine
+* link:https://github.com/hyperpolymath/zotero-librarian[Zotero-Librarian] - Filename normalization tool
+* link:https://www.zotero.org[Zotero] - The original reference manager
