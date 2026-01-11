@@ -173,6 +173,9 @@ AGPL-3.0-or-later
 
 == Related Projects
 
-* link:https://github.com/hyperpolymath/formdb[FormDB] - The underlying database engine
+* link:https://github.com/hyperpolymath/formdb[FormDB] - The underlying narrative-first database engine
+* link:https://github.com/hyperpolymath/fqldt[FQLdt] - Dependently-typed Form Query Language (compile-time proofs)
+* link:https://github.com/hyperpolymath/formdb-studio[FormDB Studio] - Zero-friction GUI for non-technical users
+* link:https://github.com/hyperpolymath/bofig[BoFIG] - Evidence graph for investigative journalism
 * link:https://github.com/hyperpolymath/zotero-librarian[Zotero-Librarian] - Filename normalization tool
 * link:https://www.zotero.org[Zotero] - The original reference manager
