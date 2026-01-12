@@ -2,12 +2,12 @@ image:[License,link="https://github.com/hyperpolymath/palimpsest-license"]
 
 // SPDX-License-Identifier: PMPL-1.0
 // SPDX-FileCopyrightText: 2025 hyperpolymath
-= Zotero-FormDB
+= Zotero-FormBD
 :toc:
 :toc-placement: preamble
 :toclevels: 3
 
-A narrative and provenance based FormDB application for the reference manager Zotero. 
+A narrative and provenance based FormBD application for the reference manager Zotero. 
 Also works on cloud-drives.
 
 == Quick Start
@@ -22,7 +22,7 @@ Choose your platform:
 
 ==== Path A: I Already Use Zotero
 
-You have Zotero with a library. You want FormDB's provenance tracking and cloud-safe storage.
+You have Zotero with a library. You want FormBD's provenance tracking and cloud-safe storage.
 
 *Time: ~5 minutes*
 
@@ -33,13 +33,13 @@ curl -fsSL https://install.julialang.org | sh
 # Then restart your terminal, or run: source ~/.bashrc
 
 # 2. Run the installer (shows what it will do first)
-curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-formdb/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-FormBD/main/install.sh | bash
 
 # 3. If the plan looks good, actually install
-curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-formdb/main/install.sh | bash -s -- --apply
+curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-FormBD/main/install.sh | bash -s -- --apply
 
 # 4. Start the server
-formdb-server
+FormBD-server
 
 # 5. Test it
 curl http://localhost:8080/users/local/items?limit=3
@@ -47,7 +47,7 @@ curl http://localhost:8080/users/local/items?limit=3
 
 *What just happened:*
 
-* Your Zotero library was copied (not moved!) to `~/.formdb/zotero/`
+* Your Zotero library was copied (not moved!) to `~/.FormBD/zotero/`
 * Each item now has provenance tracking ("migrated from Zotero")
 * You have a Zotero-compatible API server on localhost:8080
 * Your original Zotero is untouched and still works normally
@@ -56,8 +56,8 @@ curl http://localhost:8080/users/local/items?limit=3
 
 [source,bash]
 ----
-# With Zotero running, sync any changes to FormDB
-formdb-sync
+# With Zotero running, sync any changes to FormBD
+FormBD-sync
 ----
 
 === Path B: I'm New to Reference Management
@@ -68,7 +68,7 @@ You've been told this is a better way 'to do' Zotero. You don't have Zotero. Let
 
 ==== Step 1: Install Zotero (the UI)
 
-FormDB uses Zotero's excellent UI. Install Zotero first:
+FormBD uses Zotero's excellent UI. Install Zotero first:
 
 [source,bash]
 ----
@@ -93,15 +93,15 @@ curl -fsSL https://install.julialang.org | sh
 
 Open Zotero from your applications menu. This creates your library. You can close it after.
 
-==== Step 4: Install FormDB
+==== Step 4: Install FormBD
 
 [source,bash]
 ----
 # Preview the installation
-curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-formdb/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-FormBD/main/install.sh | bash
 
 # If it looks good, install
-curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-formdb/main/install.sh | bash -s -- --apply
+curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-FormBD/main/install.sh | bash -s -- --apply
 ----
 
 ==== Step 5: Daily Workflow
@@ -111,11 +111,11 @@ curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-formdb/main/ins
 # 1. Use Zotero normally to add papers, books, etc.
 #    (Browser connector works, drag-and-drop works, everything works)
 
-# 2. When you want your changes in FormDB, run:
-formdb-sync
+# 2. When you want your changes in FormBD, run:
+FormBD-sync
 
 # 3. To query your library programmatically:
-formdb-server &
+FormBD-server &
 curl http://localhost:8080/users/local/items
 ----
 
@@ -136,7 +136,7 @@ Open PowerShell and run:
 [source,powershell]
 ----
 # 1. Download the installer
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/hyperpolymath/zotero-formdb/main/install.ps1" -OutFile "install.ps1"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/hyperpolymath/zotero-FormBD/main/install.ps1" -OutFile "install.ps1"
 
 # 2. Preview what will happen
 .\install.ps1
@@ -147,7 +147,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/hyperpolymath/zotero-f
 # 4. Restart your terminal (for PATH changes)
 
 # 5. Start the server
-formdb-server
+FormBD-server
 
 # 6. Test it
 Invoke-RestMethod http://localhost:8080/users/local/items?limit=3
@@ -159,11 +159,11 @@ Invoke-RestMethod http://localhost:8080/users/local/items?limit=3
 ----
 # 1. Use Zotero normally to add papers, books, etc.
 
-# 2. When you want your changes in FormDB, run:
-formdb-sync
+# 2. When you want your changes in FormBD, run:
+FormBD-sync
 
 # 3. To query your library:
-formdb-server
+FormBD-server
 # Then in another terminal:
 Invoke-RestMethod http://localhost:8080/users/local/items
 ----
@@ -173,7 +173,7 @@ Invoke-RestMethod http://localhost:8080/users/local/items
 [source,powershell]
 ----
 # Option 1: Use the uninstall script
-~\.formdb\uninstall.ps1
+~\.FormBD\uninstall.ps1
 
 # Option 2: Re-run installer with -Uninstall
 .\install.ps1 -Uninstall
@@ -182,7 +182,7 @@ Invoke-RestMethod http://localhost:8080/users/local/items
 === What Do I Get?
 
 |===
-| Feature | Regular Zotero | Zotero + FormDB
+| Feature | Regular Zotero | Zotero + FormBD
 
 | Add papers from browser
 | ✓
@@ -235,35 +235,35 @@ After installation, you have seven commands:
 
 [source,bash]
 ----
-formdb-server [--port 8080] [--host 127.0.0.1]
+FormBD-server [--port 8080] [--host 127.0.0.1]
     Start the Zotero-compatible REST API server.
     Your library is available at http://localhost:8080/users/local/items
 
-formdb-sync [--dry-run] [--verbose]
-    Sync changes from running Zotero to FormDB.
+FormBD-sync [--dry-run] [--verbose]
+    Sync changes from running Zotero to FormBD.
     Requires Zotero to be open (uses local API on port 23119).
 
-formdb-migrate --apply
+FormBD-migrate --apply
     Re-run full migration from Zotero SQLite.
     Use this if sync gets out of date or you want a fresh start.
 
-formdb-score --item KEY [--provenance N] [--methodology N] ...
+FormBD-score --item KEY [--provenance N] [--methodology N] ...
     Set PROMPT evidence quality scores for an item (v0.2.0).
     Each dimension is 0-100. Use --all N for quick scoring.
     Use --list-unscored to find items needing evaluation.
 
-formdb-doi --status KEY
+FormBD-doi --status KEY
     Check DOI status of an item (v0.3.0).
     Shows if item is canonical (immutable) or a play-variant.
 
-formdb-doi --create-variant KEY [--name NAME]
+FormBD-doi --create-variant KEY [--name NAME]
     Create an editable play-variant of a canonical DOI item.
     Notes and annotations can only be attached to variants.
 
-formdb-doi --list-doi
+FormBD-doi --list-doi
     List all canonical DOI items in your library.
 
-formdb-doi --list-variants
+FormBD-doi --list-variants
     List all play-variants you've created.
 ----
 
@@ -368,16 +368,16 @@ curl "http://localhost:8080/users/local/blindspots"
 
 [source,bash]
 ----
-# Remove FormDB completely (Zotero is NOT affected)
-~/.formdb/uninstall.sh
+# Remove FormBD completely (Zotero is NOT affected)
+~/.FormBD/uninstall.sh
 
 # Or
-curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-formdb/main/install.sh | bash -s -- --uninstall
+curl -sSL https://raw.githubusercontent.com/hyperpolymath/zotero-FormBD/main/install.sh | bash -s -- --uninstall
 ----
 
 == Overview
 
-Zotero-FormDB reimagines bibliographic management for an era where source verification matters. Built on FQL-dt (FormDB Query Language with Dependent Types), it provides:
+Zotero-FormBD reimagines bibliographic management for an era where source verification matters. Built on FQL-dt (FormBD Query Language with Dependent Types), it provides:
 
 * **Provenance by construction** - You cannot add an item without saying who added it and why
 * **Evidence quality scores** - PROMPT-style ratings (Provenance, Replicability, Objectivity, Methodology, Publication, Transparency)
@@ -388,7 +388,7 @@ Zotero-FormDB reimagines bibliographic management for an era where source verifi
 == Why Not Just SQLite?
 
 |===
-| Problem | SQLite | Zotero-FormDB
+| Problem | SQLite | Zotero-FormBD
 
 | Cloud sync corruption
 | Common (concurrent writes)
@@ -419,18 +419,18 @@ Zotero-FormDB reimagines bibliographic management for an era where source verifi
 │  Zotero (Browser Extension / Desktop App)                   │
 │  You keep using Zotero normally                             │
 ├─────────────────────────────────────────────────────────────┤
-│  Sync Bridge (formdb-sync)                                  │
+│  Sync Bridge (FormBD-sync)                                  │
 │  Pulls changes from Zotero's local API                      │
 ├─────────────────────────────────────────────────────────────┤
-│  FormDB Journal (append-only)                               │
-│  ~/.formdb/zotero/journal.jsonl                             │
+│  FormBD Journal (append-only)                               │
+│  ~/.FormBD/zotero/journal.jsonl                             │
 │  Content-addressed, hash-chained, provenance-tracked        │
 ├─────────────────────────────────────────────────────────────┤
-│  REST API Server (formdb-server)                            │
+│  REST API Server (FormBD-server)                            │
 │  Zotero-compatible endpoints on localhost:8080              │
 ├─────────────────────────────────────────────────────────────┤
 │  Cloud Storage (optional)                                   │
-│  Just copy ~/.formdb/ to Dropbox/GDrive/OneDrive            │
+│  Just copy ~/.FormBD/ to Dropbox/GDrive/OneDrive            │
 │  Append-only = no corruption from concurrent writes         │
 └─────────────────────────────────────────────────────────────┘
 ----
@@ -464,7 +464,7 @@ structure PromptScores where
 == DOI Immutability (v0.3.0)
 
 When a document has a DOI, that DOI is a cryptographic promise: "this IS that document."
-FormDB treats DOIs as sources of truth for document identity.
+FormBD treats DOIs as sources of truth for document identity.
 
 === The Rules
 
@@ -500,7 +500,7 @@ A DOI identifies THE document as published. When you cite DOI:10.1000/xyz:
 * Not "your copy with annotations"
 * Not "a version you edited for clarity"
 
-FormDB enforces this separation so your citations remain valid references to the actual source.
+FormBD enforces this separation so your citations remain valid references to the actual source.
 
 === How It Works
 
@@ -517,14 +517,14 @@ Item with DOI:10.1000/xyz
     └── Your tags
 ----
 
-When you try to edit a DOI item, FormDB automatically:
+When you try to edit a DOI item, FormBD automatically:
 1. Creates a play-variant linked to the original
 2. Applies your changes to the variant
 3. Leaves the canonical untouched
 
 == Troubleshooting
 
-=== "Cannot connect to Zotero" when running formdb-sync
+=== "Cannot connect to Zotero" when running FormBD-sync
 
 Zotero must be running for sync to work. The sync bridge connects to Zotero's local API on port 23119.
 
@@ -557,8 +557,8 @@ The installer looks for Zotero's database in common locations. If yours is elsew
 find ~ -name "zotero.sqlite" 2>/dev/null
 
 # Then run migration manually
-cd ~/.formdb/repo/migration
-julia --project=. bin/migrate.jl --from /path/to/your/zotero.sqlite --to ~/.formdb/zotero --apply
+cd ~/.FormBD/repo/migration
+julia --project=. bin/migrate.jl --from /path/to/your/zotero.sqlite --to ~/.FormBD/zotero --apply
 ----
 
 == Roadmap
@@ -573,7 +573,7 @@ julia --project=. bin/migrate.jl --from /path/to/your/zotero.sqlite --to ~/.form
 === v0.2.0: Evidence Quality ✓
 * PROMPT scoring API (GET/PUT /items/:key/prompt-scores)
 * Quality-filtered queries (?minScore=80, ?hasScore=true)
-* formdb-score CLI for evidence evaluation
+* FormBD-score CLI for evidence evaluation
 * Scores stored in journal with provenance
 
 === v0.3.0: DOI Immutability ✓
@@ -582,7 +582,7 @@ julia --project=. bin/migrate.jl --from /path/to/your/zotero.sqlite --to ~/.form
 * Notes/annotations can ONLY attach to play-variants
 * DOI canonical versions remain pristine - you KNOW it's that document
 * `parentDOI` field links variants back to canonical source
-* `formdb-doi` CLI for DOI management
+* `FormBD-doi` CLI for DOI management
 * API endpoints: `/doi-status`, `/create-variant`
 * Query filters: `?hasDOI=true`, `?isVariant=true`
 
@@ -592,8 +592,8 @@ julia --project=. bin/migrate.jl --from /path/to/your/zotero.sqlite --to ~/.form
 * Funding source tracking (who paid for this research?)
 * Multi-scorer PROMPT aggregation (multiple evaluators, consensus metrics)
 * Blindspot detection (funding concentration, publisher concentration)
-* `formdb-publisher` CLI for publisher management
-* `formdb-blindspot` CLI for library bias analysis
+* `FormBD-publisher` CLI for publisher management
+* `FormBD-blindspot` CLI for library bias analysis
 * API endpoints: `/publishers`, `/funding`, `/blindspots`, `/prompt-scores-multi`
 
 === v0.5.0: Full Integration (Next)
@@ -607,8 +607,8 @@ AGPL-3.0-or-later
 
 == Related Projects
 
-* link:https://github.com/hyperpolymath/formdb[FormDB] - The underlying narrative-first database engine
+* link:https://github.com/hyperpolymath/FormBD[FormBD] - The underlying narrative-first database engine
 * link:https://github.com/hyperpolymath/zotero-librarian[Zotero-Librarian] - Filename normalization tool
 * link:https://www.zotero.org[Zotero] - The original reference manager we build on top of
-* link:https://github.com/hyperpolymath/formdb-debugger[FormDB Debugger] - Proof-carrying database debugger
+* link:https://github.com/hyperpolymath/FormBD-debugger[FormBD Debugger] - Proof-carrying database debugger
 * link:https://github.com/hyperpolymath/formbase[FormBase] - Open-source Airtable alternative with provenance
